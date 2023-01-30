@@ -1,0 +1,191 @@
+     A*%%TS  SD  20201125  135618  COZZI       REL-V7R3M0  5770-WDS
+     A*       Description : Work with User Profiles
+     A*       Author      : R. Cozzi
+     A*       Date        : 11/Nov/2020
+     A*                     Modification log:
+     A*                     ================
+     A*%%EC
+     A                                      DSPSIZ(27 132 *DS4)
+     A                                      INDARA
+     A                                      CA03
+     A                                      CF04
+     A                                      CA05
+     A                                      CF06
+     A                                      CF09
+     A                                      CA10
+     A                                      CA11
+     A                                      CA12
+     A                                      CF13
+     A                                      CF18
+     A          R FOOTER
+     A                                      OVERLAY
+     A                                 25  3'F3=Exit'
+     A                                      COLOR(BLU)
+     A                                    +5'F4=Prompt Option'
+     A                                      COLOR(BLU)
+     A                                    +3'F6=Create new'
+     A                                      COLOR(BLU)
+     A                                    +3'F9=Position To'
+     A                                      COLOR(BLU)
+     A                                    +3'F10=Alt View-'
+     A                                      COLOR(BLU)
+     A                                    +3'F11=Alt View+'
+     A                                      COLOR(BLU)
+     A                                 26  3'F13=Repeat'
+     A                                      COLOR(BLU)
+     A                                    +2'F18=Filters'
+     A                                      COLOR(BLU)
+     A          R DETAIL                    SFL
+     A            HDISABLED      1A  H
+     A            HUSERID       10A  H
+     A            HTEXTDESC     50A  H
+     A            USEROPT        2A  B  9  2
+     A  41                                  DSPATR(MDT)
+     A            USERID        10A  O  9  6
+     A  43                                  DSPATR(RI)
+     A            LASTSIGNDT      L  O  9 17DATFMT(*USA)
+     A                                      MAPVAL(('01/01/0001' *BLANK))
+     A  43                                  DSPATR(RI)
+     A            LASTSIGNTM      T  O  9 28TIMFMT(*USA)
+     A                                      MAPVAL(('00:00 AM' *BLANK))
+     A  43                                  DSPATR(RI)
+     A            INVALIDPWD     5Y 0O  9 38EDTCDE(Z)
+     A            USERCLASS     10A  O  9 44
+     A            INLPGM        10A  O  9 55
+     A            ALTDATA       15A  O  9 66
+     A            ALTDATA3      50A  O  9 82
+     A          R DISPLAY                   SFLCTL(DETAIL)
+     A*%%TS  SD  20201125  073443  COZZI       REL-V7R3M0  5770-WDS
+     A                                      SFLSIZ(0020)
+     A                                      SFLPAG(0015)
+     A                                      OVERLAY
+     A  21                                  SFLDSPCTL
+     A  21 22                               SFLDSP
+     A N21                                  SFLCLR
+     A N99                                  SFLEND(*MORE)
+     A                                      SFLCSRRRN(&CSRRRN)
+     A  22        CSRPOS         4S 0H      SFLRCDNBR(CURSOR)
+     A            CSRRRN         5S 0H
+     A            PGMNAME       10A  O  1  3
+     A                                  1 40'COZZI - SQL iQuery'
+     A                                      COLOR(WHT)
+     A                                  1120SYSNAME
+     A            USRDATE         L  O  2  3DATFMT(*USA)
+     A                                      MAPVAL(('01/01/0001' *CUR))
+     A                                  2 38'Work with User Profiles'
+     A                                      COLOR(BLU)
+     A                                  2120USER
+     A                                  3  5'Position to:'
+     A                                      COLOR(BLU)
+     A            POSTO         11A  I  3 19
+     A  33                                  DSPATR(PC)
+     A            ERRMSG        60A  O  3 33COLOR(RED)
+     A                                  4  3'Type option, then press Enter to m-
+     A                                      odify existing entry.'
+     A                                      COLOR(BLU)
+     A                                      DSPATR(HI)
+     A                                  5  5'2=Edit'
+     A                                      COLOR(BLU)
+     A                                  5 14'3=Disable'
+     A                                      COLOR(BLU)
+     A                                  5 26'4=Delete'
+     A                                      COLOR(BLU)
+     A                                  5 42'5=Display'
+     A                                      COLOR(BLU)
+     A                                  5 55'6=Enable'
+     A                                      COLOR(BLU)
+     A                                  5 66'7=Create HomeDir'
+     A                                      COLOR(BLU)
+     A                                  5 85'8=Work User SPLF (*ALL)'
+     A                                      COLOR(BLU)
+     A                                  5111'10=Work User Jobs'
+     A                                      COLOR(BLU)
+     A                                  6  4'12=Work Owned Obj'
+     A                                      COLOR(BLU)
+     A                                  6 25'14=Revoke Aut'
+     A                                      COLOR(BLU)
+     A                                  6 41'15=Grant Aut'
+     A                                      COLOR(BLU)
+     A                                  6 65'13=Change Text'
+     A                                      COLOR(BLU)
+     A                                  6 84'18=Work User SPLF from today'
+     A                                      COLOR(BLU)
+     A                                  7  6'User'
+     A                                      DSPATR(HI)
+     A            ISDISABLED     1A  O  7 17DSPATR(RI)
+     A                                  7 19'= Disabled'
+     A                                  7 36'Invalid'
+     A                                      DSPATR(HI)
+     A                                  7 55'Initial'
+     A                                      DSPATR(HI)
+     A            ATITLE1       15A  O  7 66DSPATR(HI)
+     A                                  8  2'Opt'
+     A                                      COLOR(WHT)
+     A                                  8  6'Profile'
+     A                                      DSPATR(HI)
+     A                                  8 17'--- Last Signon ---'
+     A                                      DSPATR(HI)
+     A                                  8 37'SignOn'
+     A                                      DSPATR(HI)
+     A                                  8 44'User Class'
+     A                                      DSPATR(HI)
+     A                                  8 55'Program'
+     A                                      DSPATR(HI)
+     A            ATITLE2       15A  O  8 66DSPATR(HI)
+     A            ATITLE3       50A  O  8 82DSPATR(HI)
+     A          R CLEARSFL                  OVERLAY
+     A            USEROPT        2A  O  9  2
+     A          R FILTER
+     A*%%TS  SD  20201125  135618  COZZI       REL-V7R3M0  5770-WDS
+     A                                      WINDOW(*DFT 15 62 *NOMSGLIN)
+     A                                      KEEP
+     A                                      WDWTITLE((*TEXT 'SQL iQuery - Work -
+     A                                      User Profile Filter Options') (*DSP-
+     A                                      ATR HI))
+     A                                  1 10'Include User Profiles with these P-
+     A                                      roperties'
+     A                                      DSPATR(HI)
+     A            ERRMSG        60A  O  2  2COLOR(RED)
+     A                                  3  1'Select Filter Options, then press -
+     A                                      Enter.'
+     A                                      COLOR(BLU)
+     A                                  4  2'USRPRF to include . . .'
+     A            FUSRPRF       10A  B  4 28
+     A                                  4 40'(full or partial)'
+     A                                  5  2'Enabled or Disabled . .'
+     A            FENABLED       1A  B  5 28VALUES('1' '2')
+     A                                      CHECK(AB)
+     A                                  5 40'(1=Enabled, 2=Disabled)'
+     A                                  6  2'Invalid Signons >=  . .'
+     A            FINVSIGNON     4N  B  6 28
+     A                                  6 40'(Blank=ALL, 1 to 9999)'
+     A                                  7  2'Initial Menu name . . .'
+     A            FINLMENU      10A  B  7 28
+     A                                  7 40'(menu or *SIGNOFF)'
+     A                                  8  2'Initial Program . . . .'
+     A            FINLPGM       10A  B  8 28
+     A                                  8 40'(program or *NONE)'
+     A                                  9  2'Current Library . . . .'
+     A            FCURLIB       10A  B  9 28
+     A                                  9 40'(library or *CRTDFT)'
+     A                                 10  2'User Class  . . . . . .'
+     A            FUSRCLASS     10A  B 10 28CHECK(AB)
+     A                                      VALUES('*USER' '*SYSOPR' '*PGMR' '*-
+     A                                      SECADM' '*SECOFR')
+     A                                 11  2'Group Profile . . . . .'
+     A            FGRPPRF       10A  B 11 28
+     A                                 11 40'(profile or *NONE)'
+     A                                 12  5'Also search Sup Grp:'
+     A            FSUPGRP        1A  B 12 28VALUES('Y' 'N' '1' '0')
+     A                                      CHECK(AB)
+     A                                 12 40'(Y=Yes  N=No)'
+     A                                 13  2'Last Signon >=  . . . .'
+     A            FDAYSINCE      4N  B 13 28
+     A                                 13 40'(days)'
+     A                                 14  2'Sup GRPPRF count >= . .'
+     A            FSUPGRPCNT     4N  B 14 28
+     A                                 14 40'(Supplemental GRPPRFs)'
+     A                                 15  3'F5=Clear Filters'
+     A                                      COLOR(BLU)
+     A                                 15 22'F12=Cancel'
+     A                                      COLOR(BLU)

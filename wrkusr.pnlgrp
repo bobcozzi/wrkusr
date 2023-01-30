@@ -1,0 +1,61 @@
+:pnlgrp submsgf='*LIBL/COZLANGEN'.
+.************************************************************************
+.*  Help for command WRKUSR
+.************************************************************************
+:help name='WRKUSR'.
+Work with User Profiles - Help
+:p.The Work with User Profiles (WRKUSR) command
+allows you to edit/change/delete User Profiles. It is part
+of the SQL iQuery Licensed Program (2COZ-IQ7).
+For more info on SQL iQuery visit: http://www.SQLiQuery.com
+WRKUSR is provided at no charge to all IBM i Customers/Users.
+(c) 2020 by R. Cozzi Jr. All rights reserved.
+Permission to use is granted however
+redistribution for commercial or between privately-parties
+is not permitted.
+:p.:hp2.Restrictions::ehp2.
+:ul.
+:li.
+Only User Profiles to which you have at least *USE authority are included.
+:li.
+To perform operations on the user profiles, you must have *USE
+authority to the command used by the operation, and the
+appropriate authority to the user profile on which the operation
+is to be performed.
+:eul.
+:ehelp.
+.*******************************************
+.*   Help for parameter USRPRF
+.*******************************************
+:help name='WRKUSR/USRPRF'.
+User profile (USRPRF) - Help
+:xh3.User profile (USRPRF)
+:p.Specifies the User Profiles to be included.
+:parml.
+:pt.:pk.*ALL:epk.
+:pd.
+All user profiles that you own or have *USE authority to are included.
+:pt.:pk.*ALLUSR or *NONIBM:epk.
+:pd.
+All user profiles that are NOT created by *IBM or that do not begin
+with the letter Q are included.
+:pt.:pk.*ALLSYS or *IBM:epk.
+:pd.
+All user profiles that are created by *IBM or begin with the letter Q
+are included.
+:pt.:pv.generic-name:epv.
+:pd.
+Specify a generic name of the users to be included. e.g., USRPRF(SALES*)
+Note that Generic names and partial names, such USRPRF(SALES)
+are used as generic names by the WRKUSR application. That is the trailing
+asterisk is implied.
+:pt.:pv.name:epv.
+:pd.
+Specify the full or partial name of user profile(s) you want to be included.
+On systems with large numbers of User Profiles, subsetting the list
+can improve initial load performance. Note that WRKUSR treats all names
+specified on the USRPRF parameter as generic names. That is specifying
+USRPRF(PURCH) or USRPRF(PURCH*) produce identical results.
+:eparml.
+:ehelp.
+:epnlgrp.
