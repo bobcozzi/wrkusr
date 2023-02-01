@@ -9,7 +9,7 @@
       *
       *               Maintenance log
       *               ================
-      *
+      *     www.SQLiQuery.com
       *******************************************************
        CTL-OPT
            copyright('(c) 2020 by R. Cozzi, Jr. All Right Reserved.')
@@ -394,13 +394,16 @@
                    else;
                      lastCSRPOS = CSRRRN;
                    endif;
-                   if (USEROPT = '2');  // Edit/Change
-                      chgUsrPrf( userid );
-                      bRefresh = *ON;
-                   elseif (USEROPT = '3'); // Disable user profile
+                   if (USEROPT = '1');      // Disable user profile
                       disableUsrprf( userID );
                       bRefresh = *ON;
-                   elseif (USEROPT = '4'); // Delete User Profile
+                   elseif (USEROPT = '2');  // Edit/Change
+                      chgUsrPrf( userid );
+                      bRefresh = *ON;
+                   elseif (USEROPT = '3');  // Copy user profile
+                      copyUsrPrf( userID );
+                      bRefresh = *ON;
+                   elseif (USEROPT = '4');  // Delete User Profile
                       dltusrprf( userID );
                       errmsg = 'User Profiles are deleted +
                                 after job QHXHDLTU completes.';
@@ -704,6 +707,7 @@
              inlMenu    int(5);       // Initial Menu Name
              inlMenuLib int(5);       // Initial Menu Library
              crtSysName int(5);       // Created-On System Name
+             crtbyUser  int(5);       // Created-by User Profile
              Limit      int(5);       // Limited Capabilities User
              text       int(5);       // User Profile Text description
            end-Ds;
@@ -1147,3 +1151,107 @@
               clear filters.SupGrpPrfCnt;
             endIf;
           end-Proc;
+
+          dcl-proc copyUsrPrf;
+            dcl-pi copyUsrPrf;
+              userID varchar(10) const;
+            end-pi;
+            dcl-s dupUserCmd varchar(4096);
+            dcl-s homePath varchar(1024);
+            dcl-s badCmd int(5);       // Created-by User Profile
+            dcl-s badDir int(5);       // Created-by User Profile
+            EXEC SQL select
+            'CRTUSRPRF ' concat
+              'USRPRF(' concat USER_NAME concat ') ' concat
+              'PWDEXP(' concat '*' CONCAT PWDEXP concat ') ' concat
+              'STATUS(' concat STATUS concat ') ' concat
+              'USRCLS(' concat USER_CLASS_NAME concat ') ' concat
+              'ASTLVL(' concat ASTLVL concat ') ' concat
+              'CURLIB(' concat CURRENT_LIBRARY_NAME concat ') ' concat
+              'INLPGM(' concat coalesce(INITPGMLIB CONCAT '/','') CONCAT
+                        INITPGM concat ') ' concat
+              'INLMNU(' concat coalesce(INLMNULIB CONCAT '/','') CONCAT
+                        INLMNU concat ') ' concat
+              'LMTCPB(' concat LMTCPB concat ') ' concat
+              'TEXT(' concat '''' concat
+                      coalesce(replace(TEXT_DESCRIPTION,'''',''''''),
+                      '*NONE') concat ''') ' concat
+              'SPCAUT(' concat coalesce(SPCAUT,'*NONE') concat ') ' concat
+              'SPCENV(' concat SPCENV concat ') ' concat
+              'DSPSGNINF(' concat DSPSGNINF concat ') ' concat
+              'PWDEXPITV(' concat CASE PWDEXPITV
+                           WHEN 0 THEN '*SYSVAL'
+                           WHEN -1 THEN '*NOMAX'
+                           ELSE DIGITS(PWDEXPITV) END concat ') ' concat
+              'PWDCHGBLK(' concat PWDCHGBLK concat ') ' concat
+              'LCLPWDMGT(' concat '*' CONCAT LCLPWDMGT concat ') ' concat
+              'LMTDEVSSN(' concat LMTDEVSSN concat ') ' concat
+              'KBDBUF(' concat KBDBUF concat ') ' concat
+              'MAXSTGLRG(' concat
+                           CASE WHEN MAXSTGLRG is NULL or
+                                     MAXSTGLRG = 2147483647 or
+                                     MAXSTGLRG = 9223372036854775807
+                                THEN '*NOMAX'
+                                ELSE DIGITS(MAXSTGLRG) END concat ') ' concat
+              'PTYLMT(' concat PTYLMT concat ') ' concat
+              'JOBD(' concat coalesce(JOBDLIB CONCAT '/','') CONCAT
+                      JOBD concat ') ' concat
+              'GRPPRF(' concat GRPPRF concat ') ' concat
+              'OWNER(' concat OWNER concat ') ' concat
+              'GRPAUT(' concat GRPAUT concat ') ' concat
+              'GRPAUTTYP(' concat GRPAUTTYP concat ') ' concat
+              'SUPGRPPRF(' concat CASE WHEN SUPPLEMENTAL_GROUP_COUNT > 0
+                                       THEN SUPPLEMENTAL_GROUP_LIST
+                                       ELSE '*NONE' end concat ') ' concat
+              'ACGCDE(' concat coalesce(ACGCDE, '*BLANK') concat ') ' concat
+              'DOCPWD(*NONE) ' concat  -- not returned by the User_Info view
+              'MSGQ(' concat coalesce(MSGQLIB CONCAT '/','') CONCAT
+                      MSGQ concat ') ' concat
+              'DLVRY(' concat DLVRY concat ') ' concat
+              'SEV(' concat CASE SEV WHEN 0 THEN '0'
+                            ELSE ltrim(digits(SEV),'0') end
+                     concat ') ' concat
+              'PRTDEV(' concat PRTDEV concat ') ' concat
+              'OUTQ(' concat coalesce(OUTQLIB CONCAT '/','') CONCAT
+                      OUTQ concat ') ' concat
+              'ATNPGM(' concat coalesce(ATNPGMLIB CONCAT '/','') CONCAT
+                               ATNPGM concat ') ' concat
+              'SRTSEQ(' concat coalesce(SRTSEQLIB CONCAT '/','') concat
+                               "SRTSEQ" concat ') ' concat
+              'LANGID(' concat LANGID concat ') ' concat
+              'CNTRYID(' concat CNTRYID concat ') ' concat
+              'CCSID(' concat CASE WHEN CCSID = 'QCCSID' THEN '*SYSVAL'
+                              ELSE CCSID END CONCAT ') ' concat
+              'CHRIDCTL(' concat CHRIDCTL concat ') ' concat
+              'SETJOBATR(' concat SETJOBATR concat ') ' concat
+              'LOCALE(' concat coalesce(LOCALE,'*NONE') concat ') ' concat
+              'USROPT(' concat coalesce(USROPT,'*NONE') concat ') ' concat
+              'UID(*GEN) ' concat
+              'GID(' concat CASE WHEN GID = 0 THEN '*NONE' ELSE '0' concat
+                     ltrim(digits(GID),'0') end concat ') ' concat
+              'USREXPDATE(' concat CASE WHEN USREXPDATE is NULL THEN '*NONE'
+                            ELSE cast(cast(USREXPDATE as date) as varchar(10))
+                             end concat ') ' concat
+              'USREXPITV(' concat
+                           CASE WHEN USREXPDATE is NULL or USREXPITV = 0
+                           THEN '*N' ELSE DIGITS(USREXPITV) END concat ') ',
+              HOME_DIRECTORY
+
+            INTO :dupUserCmd:badCmd,
+                 :homePath:badDir
+            from qsys2.user_info
+            where USER_NAME = :userID
+            LIMIT 1;
+
+            if (SQLState < '02000' and badCmd >= 0);
+               // commented-out code insert the original user's hoem dir
+               // the WRKUSRPRF command inserts *USRPRF when copying,
+               // so I mimic it here.
+         //     if (badDir >=0);
+         //       dupUserCmd += ' HOMEDIR(''' + %trimR(homePath) + ''')';
+         //     endif;
+              dupUserCmd += ' HOMEDIR(*USRPRF)';
+              system('?' + dupUserCmd);
+            endif;
+
+          end-proc;

@@ -1,4 +1,4 @@
-     A*%%TS  SD  20201125  135618  COZZI       REL-V7R3M0  5770-WDS
+     A*%%TS  SD  20230201  111811  COZZI       REL-V7R3M0  5770-WDS
      A*       Description : Work with User Profiles
      A*       Author      : R. Cozzi
      A*       Date        : 11/Nov/2020
@@ -55,7 +55,7 @@
      A            ALTDATA       15A  O  9 66
      A            ALTDATA3      50A  O  9 82
      A          R DISPLAY                   SFLCTL(DETAIL)
-     A*%%TS  SD  20201125  073443  COZZI       REL-V7R3M0  5770-WDS
+     A*%%TS  SD  20230201  111811  COZZI       REL-V7R3M0  5770-WDS
      A                                      SFLSIZ(0020)
      A                                      SFLPAG(0015)
      A                                      OVERLAY
@@ -84,15 +84,17 @@
      A                                      odify existing entry.'
      A                                      COLOR(BLU)
      A                                      DSPATR(HI)
-     A                                  5  5'2=Edit'
+     A                                  5  5'1=Disable'
      A                                      COLOR(BLU)
-     A                                  5 14'3=Disable'
+     A                                  5 16'2=Edit'
      A                                      COLOR(BLU)
-     A                                  5 26'4=Delete'
+     A                                  5 24'3=Copy'
+     A                                      COLOR(BLU)
+     A                                  5 32'4=Delete'
      A                                      COLOR(BLU)
      A                                  5 42'5=Display'
      A                                      COLOR(BLU)
-     A                                  5 55'6=Enable'
+     A                                  5 55'6=Enable '
      A                                      COLOR(BLU)
      A                                  5 66'7=Create HomeDir'
      A                                      COLOR(BLU)
@@ -102,7 +104,7 @@
      A                                      COLOR(BLU)
      A                                  6  4'12=Work Owned Obj'
      A                                      COLOR(BLU)
-     A                                  6 25'14=Revoke Aut'
+     A                                  6 23'14=Revoke Aut'
      A                                      COLOR(BLU)
      A                                  6 41'15=Grant Aut'
      A                                      COLOR(BLU)
