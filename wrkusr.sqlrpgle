@@ -41,6 +41,11 @@
 
            dcl-s usrprf varchar(10) inz(*USER);
 
+      /include qsysinc/qrpglesrc,qusrobjd
+
+           dcl-ds userObjD likeDS(QUSD0300) Inz(*LIKEDS);
+           dcl-ds objDesc  likeDS(QUSD0300) Inz(*LIKEDS);
+
            dcl-ds filters Qualified Inz;
              usrprf   varchar(10);   // User Profile (generic, full, or *ALL)
              status   varchar(10);   // Enable/Disable Status
@@ -778,17 +783,11 @@
                         TEXT_DESCRIPTION,
                         USER_CREATOR,
                         CREATION_TIMESTAMP,
-                        OI.CREATED_SYSTEM,
                    cast(UI.home_directory as varchar(1024) for SBCS DATA)
-                  -- NOTE: This is done using a JOIN because
-                  -- the V7R2 version of Object_Stats does not support
-                  -- the object name as the 3rd parameter. That doesn't
-                  -- become available until a later TR in V7R3/R4.
-               from table(qsys2.object_statistics('QSYS','*USRPRF')) OI
-                INNER JOIN qsys2.user_info UI
-                  ON OI.OBJNAME = UI.USER_NAME
 
-                   WHERE
+                FROM   qsys2.user_info UI
+
+                WHERE
                          UI.STATUS = CASE WHEN :filters.status = ''
                                        THEN UI.STATUS
                                        ELSE :filters.status
@@ -818,6 +817,12 @@
                                        ELSE :filters.curlib
                                   end
                            and
+                         UI.USER_CLASS_NAME =
+                                  CASE WHEN :filters.usrclass = ''
+                                       THEN UI.USER_CLASS_NAME
+                                       ELSE :filters.usrclass
+                                  end
+                           and
                  -- Group Profiles?
                          UI.group_profile_NAME =
                                   CASE WHEN :filters.grpprf = ''
@@ -844,9 +849,9 @@
                            and
                         UI.USER_NAME LIKE
                            CASE WHEN :SELUSER = ' ' or :SELUSER = '*ALL'
-                                THEN OBJNAME
+                                THEN  UI.USER_NAME
                                 WHEN SUBSTR(:SELUSER,1,1) = '*'
-                                THEN OBJNAME
+                                THEN  UI.USER_NAME
                                 ELSE :SELUSER
                            end
                        AND ( (SUBSTR(:SELUSER,1,1) <> '*' OR
@@ -889,7 +894,6 @@
                          :UI.TEXT_DESCRIPTION:indy.text,
                          :UI.USER_CREATOR,
                          :UI.CREATION_TIMESTAMP,
-                         :UI.crtSysName:indy.crtSysName,
                          :homeDir;
 
           IF (sqlState >= '02000'); // Nothing returned?
@@ -909,6 +913,10 @@
 
                rrn += 1;
 
+               getObjD(objDesc : ui.USER_PROFILE: 'QSYS':'*USRPRF');
+               if (objDesc.QUSSOBJC03 <> '');
+                 UI.crtsysName = objDesc.QUSSOBJC03;
+               ENDIF;
              ///////////////////////////////////////////////////////
              // Check the Null Indicators from the row result and
              // adjust the output accordingly.
@@ -1023,7 +1031,6 @@
                          :UI.TEXT_DESCRIPTION:indy.text,
                          :UI.USER_CREATOR,
                          :UI.CREATION_TIMESTAMP,
-                         :UI.crtSysName:indy.crtSysName,
                          :homeDir;
             enddo;
 
@@ -1135,6 +1142,9 @@
             else;
               clear filters.supGroups;
             endIf;
+
+            filters.usrClass = fusrClass;
+
             if (%Check('0 ':FDaySince) = 0);
               clear filters.lastSignOn;
             elseif (%Check('0123456789 ':FDaySince) = 0);
@@ -1255,3 +1265,39 @@
             endif;
 
           end-proc;
+
+           dcl-proc getobjD;
+             dcl-pi getObjD;
+               objDesc likeDS(QUSD0300) OPTIONS(*VARSIZE);
+               objname varchar(10) const;
+               objlib  varchar(10) const;
+               objtype varchar(8) const;
+             END-PI;
+             dcl-ds QUsEC_t Qualified Inz;
+                  bytes_provided int(10);
+                  bytes_returned int(10);
+                  msgid char(7);
+                  msgData char(48);
+             END-DS;
+
+             dcl-pr rtvobjd extpgm('QUSROBJD');
+                rtndata likeDS(QUSD0300) OPTIONS(*VARSIZE);
+                rtnDataLen int(10) const;
+                apiFMT char(8) const;
+                object char(20) const;
+                objType char(10) const;
+                error   likeds(QUSEC_T) options(*VARSIZE);
+             END-PR;
+               dcl-ds ec   likeds(QUSEC_T) inz(*LIKEDS);
+               dcl-s  qualObj char(20);
+               %subst(qualObj:1:10) = objName;
+               %subst(qualObj:11:10) = objLib;
+
+               ec.bytes_provided =  %size(QuSEC_T);
+               rtvobjd( objdesc : %size(objDesc) : 'OBJD0300':
+                        qualObj : OBJTYPE : ec);
+               if (ec.bytes_returned > 0);
+                 clear objDesc;
+               endif;
+               return;
+           END-PROC;
