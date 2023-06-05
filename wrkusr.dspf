@@ -1,4 +1,4 @@
-     A*%%TS  SD  20230201  111811  COZZI       REL-V7R3M0  5770-WDS
+     A*%%TS  SD  20230605  143004  COZZI       REL-V7R3M0  5770-WDS
      A*       Description : Work with User Profiles
      A*       Author      : R. Cozzi
      A*       Date        : 11/Nov/2020
@@ -138,7 +138,7 @@
      A          R CLEARSFL                  OVERLAY
      A            USEROPT        2A  O  9  2
      A          R FILTER
-     A*%%TS  SD  20201125  135618  COZZI       REL-V7R3M0  5770-WDS
+     A*%%TS  SD  20230605  143004  COZZI       REL-V7R3M0  5770-WDS
      A                                      WINDOW(*DFT 15 62 *NOMSGLIN)
      A                                      KEEP
      A                                      WDWTITLE((*TEXT 'SQL iQuery - Work -
@@ -191,3 +191,4 @@
      A                                      COLOR(BLU)
      A                                 15 22'F12=Cancel'
      A                                      COLOR(BLU)
+     A                                 10 40'(*USER *PGM *SYSOPR...)'
